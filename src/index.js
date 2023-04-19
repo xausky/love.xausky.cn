@@ -212,7 +212,9 @@ class LoveEffectThreeWorld {
     }
 
     update() {
-        this.stats.begin();
+        if(this.stats){
+            this.stats.begin();
+        }
         if(this.numbers){
             let now = new Date().getTime() - new Date('2012.11.22').getTime()
             let currentSecond = Math.floor(now / 1000)
@@ -229,7 +231,9 @@ class LoveEffectThreeWorld {
             this.storm.update(new Date().getTime() / 1000.0)
         }
         this.renderer.render(this.scene, this.camera);
-        this.stats.end();
+        if(this.stats){
+            this.stats.end();
+        }
         requestAnimationFrame(() => {
             this.update()
         });
