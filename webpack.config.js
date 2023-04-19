@@ -8,7 +8,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Love With Zuo',
+      title: 'Love With zzF',
     }),
     new CopyWebpackPlugin({patterns: [{
       from:path.resolve(__dirname, 'src/static'),
