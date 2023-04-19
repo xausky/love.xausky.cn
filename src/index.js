@@ -10,6 +10,8 @@ import MainFrag from './main.frag';
 import Avatar from './avatar';
 import Effect from "./effect";
 import EffectNumber from "./effect-number";
+import Storm from "./storm";
+
 
 class LoveEffectThreeWorld {
     constructor(canvasContainer) {
@@ -24,6 +26,7 @@ class LoveEffectThreeWorld {
         // this.number = new EffectNumber(this.scene)
         // this.avatar = new Avatar(this.scene)
         this.initNumbersWithCache();
+        this.storm = new Storm(this.scene)
         // 轨道控制插件（鼠标拖拽视角、缩放等）
         this.orbitControls = new OrbitControls(this.camera, this.container);
         this.orbitControls.maxDistance = 1000;
@@ -201,9 +204,9 @@ class LoveEffectThreeWorld {
         for(let i = 0; i < 8; i++){
             this.numbers[i] = new EffectNumber(this.scene)
             if (i === 2 || i === 5){
-                this.numbers[i].load(-48 * (i - 3) + 18, -64)
-            } else {
                 this.numbers[i].load(-48 * (i - 3), -64)
+            } else {
+                this.numbers[i].load(-48 * (i - 3) - 18, -64)
             }
         }
     }
@@ -218,9 +221,12 @@ class LoveEffectThreeWorld {
             let nextNumbers = this.solveNumbers(currentSecond + 1)
             for(let i = 0; i < 14; i++){
                 if (currentNumbers[i] != null){
-                    this.numbers[i].update(now % 1000000 / 1000, this.cubic(secondProcess), currentNumbers[i], nextNumbers[i])
+                    this.numbers[i].update(now % 1000000 / 1000, this.cubic(secondProcess), currentNumbers[i], nextNumbers[i], this.HEIGHT * window.devicePixelRatio)
                 }
             }
+        }
+        if(this.storm){
+            this.storm.update(new Date().getTime() / 1000.0)
         }
         this.renderer.render(this.scene, this.camera);
         this.stats.end();

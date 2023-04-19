@@ -8,7 +8,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      title: 'Love Effect With Zuo',
     }),
     new CopyWebpackPlugin({patterns: [{
       from:path.resolve(__dirname, 'src/static'),

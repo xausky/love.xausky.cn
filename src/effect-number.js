@@ -24,6 +24,9 @@ export default class EffectNumber {
                 },
                 next: {
                     type:'i',value: 0
+                },
+                viewportHeight: {
+                    type:'f',value: 100.0
                 }
             },
             vertexShader: MainVert,
@@ -49,12 +52,13 @@ export default class EffectNumber {
         this.scene.add(this.object);
     }
 
-    update(time, process, current, next){
+    update(time, process, current, next, viewportHeight){
         if (this.object){
             this.object.material.uniforms.time.value = time
             this.object.material.uniforms.process.value = process
             this.object.material.uniforms.current.value = current
             this.object.material.uniforms.next.value = next
+            this.object.material.uniforms.viewportHeight.value = viewportHeight
         }
     }
 }
