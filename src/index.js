@@ -20,7 +20,7 @@ class LoveEffectThreeWorld {
         this.createScene();
 
         // 性能监控插件
-        this.initStats();
+        // this.initStats();
         // 物体添加
         // this.initNumbers();
         // this.number = new EffectNumber(this.scene)
