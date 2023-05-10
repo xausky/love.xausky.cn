@@ -1,13 +1,9 @@
 import * as THREE from 'three';
 import Stats from 'stats.js';
-import css from './index.css';
 import BezierEasing from 'bezier-easing'
 import {FontLoader} from 'three/examples/jsm/loaders/FontLoader.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry.js';
-import MainVert from './main.vert';
-import MainFrag from './main.frag';
-import Avatar from './avatar';
 import Effect from "./effect";
 import EffectNumber from "./effect-number";
 import Storm from "./storm";
@@ -18,13 +14,8 @@ class LoveEffectThreeWorld {
         this.container = canvasContainer || document.body;
         // 创建场景
         this.createScene();
-
         // 性能监控插件
         // this.initStats();
-        // 物体添加
-        // this.initNumbers();
-        // this.number = new EffectNumber(this.scene)
-        // this.avatar = new Avatar(this.scene)
         this.initNumbersWithCache();
         this.storm = new Storm(this.scene)
         // 轨道控制插件（鼠标拖拽视角、缩放等）
@@ -113,86 +104,6 @@ class LoveEffectThreeWorld {
         this.camera.aspect = this.WIDTH / this.HEIGHT;
         this.camera.updateProjectionMatrix();
     }
-    // 模型加入场景
-    initNumbers() {
-        const loader = new FontLoader();
-        loader.load('/static/LESLIE.json', (font) => {
-            const geometries = new Array(12);
-            for(let i = 0; i < 10; i++){
-                geometries[i] = new TextGeometry(String.fromCharCode(48 + i), {
-                    font: font,
-                    size: 64,
-                    height: 8
-                })
-            }
-            geometries[10] = new TextGeometry(':', {
-                font: font,
-                size: 64,
-                height: 8
-            })
-            geometries[11] = new TextGeometry('X', {
-                font: font,
-                size: 64,
-                height: 8
-            })
-            this.initNumbersWithGeometries(geometries);
-        })
-    }
-
-    // 粒子变换
-    initNumbersWithGeometries(geometries) {
-        // 着色器材料
-        let shaderMaterial = new THREE.ShaderMaterial({
-            uniforms:{
-                time: {
-                    type:'f',value: 0.0
-                },
-                process: {
-                    type:'f',value: 0.0
-                },
-                current: {
-                    type:'i',value: 0
-                },
-                next: {
-                    type:'i',value: 0
-                }
-            },
-            vertexShader: MainVert,
-            fragmentShader: MainFrag,
-            blending: THREE.AdditiveBlending,
-            depthTest: false,
-            transparent: true
-        });
-        const bufferGeometry = new THREE.BufferGeometry();
-        const numberVertexes = new Float32Array(geometries.length * 1000 * 3)
-        for(let i = 0; i < geometries.length; i++){
-            console.log("Fill Mesh Use Raycaster Process: ", i);
-            const vertexes = Effect.fillMeshByRayCaster(geometries[i], 1000);
-            if(i === 11){
-                // 以 X 作为 Base
-                bufferGeometry.setAttribute('position', new THREE.BufferAttribute(vertexes, 3));
-            }
-            bufferGeometry.setAttribute('p' + i, new THREE.BufferAttribute(vertexes, 3));
-            for (let j = 0; j < 1000 * 3; j++) {
-                numberVertexes[i * 1000 * 3 + j] = vertexes[j];
-            }
-        }
-        Effect.downloadFileByBlob(URL.createObjectURL(new Blob([numberVertexes.buffer])), "numbers.bin")
-        this.numbers = new Array(14);
-        for(let i = 0; i < 8; i++){
-            this.numbers[i] = new THREE.Points(bufferGeometry, shaderMaterial.clone());
-            this.numbers[i].translateY(-64);
-            this.numbers[i].translateX(-48 * (i - 4));
-            this.scene.add(this.numbers[i]);
-        }
-        for(let i = 0; i < 6; i++){
-            this.numbers[i + 8] = new THREE.Points(bufferGeometry, shaderMaterial.clone());
-            this.numbers[i + 8].translateY(24);
-            this.numbers[i + 8].translateX(-48 * (i - 3));
-            this.scene.add(this.numbers[i + 8]);
-        }
-    }
-
     initNumbersWithCache(){
         this.numbers = new Array(14);
         for(let i = 0; i < 6; i++){
@@ -228,7 +139,7 @@ class LoveEffectThreeWorld {
             }
         }
         if(this.storm){
-            this.storm.update(new Date().getTime() / 1000.0)
+            this.storm.update(new Date().getTime() / 1000.0, this.HEIGHT * window.devicePixelRatio)
         }
         this.renderer.render(this.scene, this.camera);
         if(this.stats){
@@ -265,3 +176,4 @@ class LoveEffectThreeWorld {
 }
 
 const world = new LoveEffectThreeWorld(document.body);
+(function(){document.querySelector("body").requestFullscreen();})();

@@ -1,8 +1,6 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import Effect from "./effect";
-import MainVert from "./number-effect.vert";
-import MainFrag from "./main.frag";
+import vertexShader from "./number-effect.vert";
+import fragmentShader from "./number-effect.frag";
 
 
 export default class EffectNumber {
@@ -29,8 +27,8 @@ export default class EffectNumber {
                     type:'f',value: 100.0
                 }
             },
-            vertexShader: MainVert,
-            fragmentShader: MainFrag,
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
             blending: THREE.AdditiveBlending,
             depthTest: false,
             transparent: true

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import vertexShader from "./storm.vert";
+import fragmentShader from "./storm.frag";
 
-const size = 1000
+const size = 2000
 
 export default class Storm {
     constructor(scene) {
@@ -9,7 +11,7 @@ export default class Storm {
         const vertices = []
 
 
-        for ( let i = 0; i < 3200; i ++ ) {
+        for ( let i = 0; i < 1600; i ++ ) {
           const x = Math.random() * size - size / 2
           const y = Math.random() * size - size / 2
           const z = Math.random() * size - size / 2
@@ -19,29 +21,32 @@ export default class Storm {
 
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
 
-        const material = new THREE.PointsMaterial({
-          size: 4,
-          color: 0xef93b6,
-        })
+        const material = new THREE.ShaderMaterial({
+          uniforms:{
+            time: {
+              type:'f',value: 3.0
+            },
+            viewportHeight: {
+              type:'f',value: 100.0
+            }
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true
+        });
 
         this.particles = new THREE.Points(geometry, material)
         this.scene.add(this.particles)
     }
-    update(time){
+    update(time, viewportHeight){
         if (this.particles){
-            for (let i = 0; i < this.particles.geometry.attributes.position.count * 3; i+=3) {
-                // x
-                this.particles.geometry.attributes.position.array[i] -= 0.5
-                if(this.particles.geometry.attributes.position.array[i] < -size / 2){
-                    this.particles.geometry.attributes.position.array[i] = size / 2
-                }
-                // y
-                this.particles.geometry.attributes.position.array[i + 1] -= 0.5
-                if(this.particles.geometry.attributes.position.array[i + 1] < -size / 2){
-                    this.particles.geometry.attributes.position.array[i + 1] = size / 2
-                }
-            }
-            this.particles.geometry.attributes.position.needsUpdate = true
+          if(!this.start){
+            this.start = time
+          }
+          // this.particles.material.uniforms.time.value = time - this.start
+          this.particles.material.uniforms.viewportHeight.value = size
         }
     }
 }
